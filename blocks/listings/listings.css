@@ -1,60 +1,78 @@
-/* 1. The Container (The Grid) */
+/* Grid Layout - Fixes "No alignment" */
 .listings ul {
-  display: flex;             /* Align items in a row */
-  flex-wrap: wrap;           /* Allow items to wrap to the next line */
-  gap: 20px;                 /* Space between cards */
-  list-style: none;          /* Remove the ugly dots */
+  list-style: none; /* Removes bullets */
   padding: 0;
-  margin: 0;
-  justify-content: center;   /* Center the grid on screen */
+  margin: 60px auto 0; /* Adds gap from search bar */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  max-width: 1400px;
 }
 
-/* 2. The Card (The Box) */
-.listings li {
+/* Card Shape - Fixes "Card shape is gone" */
+.listings .card {
+  position: relative;
   background-color: white;
-  border-radius: 12px;       /* Rounded corners */
-  overflow: hidden;          /* Clip content that sticks out */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow */
+  border-radius: 15px; /* Rounded corners */
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Drop shadow */
   
-  /* CRITICAL: Limit the width so they sit side-by-side */
-  flex: 0 0 300px;           /* Don't grow, don't shrink, stay 300px wide */
-  width: 300px;              /* Fallback width */
-  
-  transition: transform 0.2s; /* Smooth hover animation */
+  flex: 0 0 300px; /* Fixed width */
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.listings li:hover {
-  transform: translateY(-5px); /* Lift up slightly on hover */
+.listings .card:hover {
+  transform: translateY(-5px);
 }
 
-/* 3. The Image (The Seatbelt) */
-.listing-image img {
-  width: 100%;               /* Force image to fit the card width */
-  height: 200px;             /* Force all images to be the same height */
-  object-fit: cover;         /* Crop the image neatly (no stretching) */
+/* Heart Icon - Fixes "Bulletin and Heart Icon" */
+.listings .heart-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.listings .heart-icon:hover {
+  transform: scale(1.1);
+  color: #fff;
+}
+
+/* Image */
+.listings .listing-image img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
   display: block;
 }
 
-/* 4. The Text */
-.listing-body {
+/* Text Body */
+.listings .listing-body {
   padding: 15px;
 }
 
-.listing-body h3 {
+.listings h3 {
   margin: 0 0 5px 0;
   font-size: 16px;
-  color: #333;
+  color: #222;
 }
 
-.listing-body p {
-  margin: 0;
-  color: #717171;
+.listings p {
+  margin: 3px 0;
   font-size: 14px;
+  color: #717171;
 }
 
-.price {
-  margin-top: 10px;
-  color: #000;
+.listings .price {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #222;
   font-weight: bold;
 }

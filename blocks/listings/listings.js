@@ -1,39 +1,46 @@
 export default async function decorate(block) {
-    console.log('🚀 Listings Branch Loaded!'); 
+  // 1. Fetch Data
+  const response = await fetch('/listings.json');
+  const json = await response.json();
   
-    const link = block.querySelector('a');
-    const path = link ? link.getAttribute('href') : block.textContent.trim();
+  // 2. Clear Block
+  block.textContent = '';
+  const ul = document.createElement('ul');
   
-    // Fetch Data
-    const resp = await fetch(path);
-    if (!resp.ok) {
-      console.error('❌ Failed to load listings.json');
-      return;
-    }
-  
-    const json = await resp.json();
+  // 3. Create Cards
+  json.data.forEach((property) => {
+    const li = document.createElement('li');
+    li.className = 'card';
     
-    // Clear the block only after data is found
-    block.textContent = '';
-    
-    const ul = document.createElement('ul');
-    
-    json.data.forEach((row) => {
-      const li = document.createElement('li');
-      li.innerHTML = `
+    li.innerHTML = `
+        <div class="heart-icon">&#10084;</div>
         <div class="listing-image">
-          <picture>
-            <img src="${row.image}" alt="${row.name}">
-          </picture>
+            <img src="${property.image}" alt="${property.name}">
         </div>
         <div class="listing-body">
-          <h3>${row.name}</h3>
-          <p>${row.distance}</p>
-          <p class="price"><strong>$${row.price}</strong> / night</p>
+            <h3>${property.name}</h3>
+            <p>${property.distance}</p>
+            <p>${property.dates}</p>
+            <p class="price"><strong>$${property.price}</strong>/night</p>
         </div>
-      `;
-      ul.append(li);
+    `;
+    ul.append(li);
+  });
+
+  block.append(ul);
+
+  // 4. Search Listener
+  document.addEventListener('performSearch', (event) => {
+    const query = event.detail.query.toLowerCase().trim();
+    const cards = block.querySelectorAll('.card');
+
+    cards.forEach((card) => {
+        const title = card.querySelector('h3').innerText.toLowerCase();
+        if (query === '' || title.includes(query)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
     });
-  
-    block.append(ul);
-  }
+  });
+}
