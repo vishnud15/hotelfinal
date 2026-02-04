@@ -1,43 +1,50 @@
-/* Grid Layout - Fixes "No alignment" */
+/* 1. CONTAINER (Fluid Grid) */
 .listings ul {
-  list-style: none; /* Removes bullets */
-  padding: 0;
-  margin: 60px auto 0; /* Adds gap from search bar */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
+  list-style: none;
+  padding: 0 20px;
+  margin: 40px auto;
   max-width: 1400px;
+  
+  /* --- THE FIX --- */
+  display: grid;
+  /* "repeat(auto-fill, ...)" = Create as many columns as fit.
+     "minmax(300px, 1fr)"     = Columns are at least 300px, but stretch (1fr) to fill gaps.
+  */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
 }
 
-/* Card Shape - Fixes "Card shape is gone" */
+/* 2. THE CARD */
 .listings .card {
   position: relative;
   background-color: white;
-  border-radius: 15px; /* Rounded corners */
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Drop shadow */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   
-  flex: 0 0 300px; /* Fixed width */
+  /* Remove fixed width so it can stretch with the grid */
+  width: 100%; 
   display: flex;
   flex-direction: column;
+  
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .listings .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
 
-/* Heart Icon - Fixes "Bulletin and Heart Icon" */
+/* 3. HEART ICON */
 .listings .heart-icon {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: rgba(255, 255, 255, 0.9);
   z-index: 10;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .listings .heart-icon:hover {
@@ -45,7 +52,7 @@
   color: #fff;
 }
 
-/* Image */
+/* 4. IMAGE */
 .listings .listing-image img {
   width: 100%;
   height: 250px;
@@ -53,26 +60,29 @@
   display: block;
 }
 
-/* Text Body */
+/* 5. TEXT CONTENT */
 .listings .listing-body {
-  padding: 15px;
+  padding: 16px;
 }
 
 .listings h3 {
-  margin: 0 0 5px 0;
+  margin: 0 0 6px 0;
   font-size: 16px;
+  font-weight: 600;
   color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .listings p {
-  margin: 3px 0;
+  margin: 2px 0;
   font-size: 14px;
   color: #717171;
 }
 
 .listings .price {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 16px;
   color: #222;
-  font-weight: bold;
 }
