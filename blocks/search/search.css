@@ -142,3 +142,52 @@
     min-width: auto;
   }
 }
+/* --- MOBILE STYLES (Fix Alignment) --- */
+@media (max-width: 768px) {
+  /* 1. Wrapper: Prevent overflow and reduce padding */
+  .search {
+    padding: 10px; /* Reduced from 20px so it fits tight screens */
+    width: 100%;
+    box-sizing: border-box; /* CRITICAL: Includes padding in width calculation */
+  }
+
+  /* 2. The Search Box: Stack and Center */
+  .search .search-bar {
+    flex-direction: column;
+    width: 100%;       /* Fill the screen */
+    max-width: 100%;   /* Remove desktop limits */
+    margin: 0 auto;    /* Force Center */
+    padding: 15px;     /* Internal spacing */
+    box-sizing: border-box; /* Prevents it from being wider than screen */
+    gap: 0;            /* Remove gap to let borders handle spacing */
+    
+    border-radius: 16px; /* Slightly boxier for mobile */
+    align-items: stretch; /* Force inputs to fill the width */
+  }
+
+  /* 3. Items: Full Width */
+  .search .search-item {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding: 12px 5px; /* Adjust spacing for fingers */
+  }
+
+  /* Remove border from the last input (before the button) */
+  .search .search-item:nth-last-child(2) {
+    border-bottom: none;
+  }
+
+  /* 4. Button: Full Width & Big Target */
+  .search #search-btn {
+    width: 100%;
+    margin: 10px 0 0 0; /* Reset margins */
+    padding: 14px;
+    border-radius: 12px;
+  }
+  
+  /* Reset location item width */
+  .search .location-item {
+    min-width: auto;
+  }
+}

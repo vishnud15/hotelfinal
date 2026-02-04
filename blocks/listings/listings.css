@@ -1,28 +1,26 @@
-/* 1. CONTAINER (Fluid Grid) */
+/* 1. CONTAINER (The Fluid Grid) */
+/* This ensures cards fill the screen edge-to-edge with no awkward gaps */
 .listings ul {
   list-style: none;
   padding: 0 20px;
   margin: 40px auto;
   max-width: 1400px;
   
-  /* --- THE FIX --- */
   display: grid;
-  /* "repeat(auto-fill, ...)" = Create as many columns as fit.
-     "minmax(300px, 1fr)"     = Columns are at least 300px, but stretch (1fr) to fill gaps.
-  */
+  /* Columns are at least 300px, but stretch to share empty space equally */
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
 }
 
 /* 2. THE CARD */
 .listings .card {
-  position: relative;
+  position: relative; /* CRITICAL: keeps the heart inside the card */
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   
-  /* Remove fixed width so it can stretch with the grid */
+  /* Grid handles the width, so we just fill the cell */
   width: 100%; 
   display: flex;
   flex-direction: column;
@@ -36,20 +34,32 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
 
-/* 3. HEART ICON */
+/* 3. HEART ICON (The Like Button) */
 .listings .heart-icon {
   position: absolute;
   top: 15px;
   right: 15px;
   font-size: 1.4rem;
-  color: rgba(255, 255, 255, 0.9);
+  
+  /* Default state: Transparent White */
+  color: rgba(255, 255, 255, 0.7); 
   z-index: 10;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  cursor: pointer;
+  
+  /* Shadow makes it visible on light images */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  transition: transform 0.2s, color 0.2s;
 }
 
 .listings .heart-icon:hover {
-  transform: scale(1.1);
-  color: #fff;
+  transform: scale(1.2); /* Pop effect */
+  color: white;
+}
+
+/* ACTIVE STATE: When the user likes it */
+.listings .heart-icon.liked {
+  color: #e0294a; /* Red */
+  opacity: 1;
 }
 
 /* 4. IMAGE */
@@ -60,7 +70,7 @@
   display: block;
 }
 
-/* 5. TEXT CONTENT */
+/* 5. CONTENT */
 .listings .listing-body {
   padding: 16px;
 }
@@ -70,6 +80,8 @@
   font-size: 16px;
   font-weight: 600;
   color: #222;
+  
+  /* Truncate long titles with "..." */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -85,4 +97,27 @@
   margin-top: 10px;
   font-size: 16px;
   color: #222;
+}
+/* --- MOBILE CENTER FIX --- */
+@media (max-width: 480px) {
+  .listings ul {
+    /* 1. Kill the invisible 'bullet point' padding */
+    padding-left: 0 !important; 
+    padding-right: 0 !important;
+    
+    /* 2. Center the container manually */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 95%; /* Leave tiny space on edges */
+    
+    /* 3. Force 1 Column and Center the Card inside it */
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .listings .card {
+    /* Ensure the card doesn't overflow */
+    width: 100%;
+    max-width: 320px; /* Cap size so it looks nice */
+  }
 }
