@@ -1,20 +1,19 @@
 export default async function decorate(block) {
+    console.log('🚀 Listings Branch Loaded!'); 
+  
     const link = block.querySelector('a');
     const path = link ? link.getAttribute('href') : block.textContent.trim();
   
-    // 1. Fetch Data FIRST
+    // Fetch Data
     const resp = await fetch(path);
-    
-    // 🔴 SAFETY CHECK: If fetch fails, STOP.
-    // The Blue Link will stay on screen so you KNOW the data is missing.
     if (!resp.ok) {
-      console.error('❌ Failed to load listings.json. Status:', resp.status);
-      return; 
+      console.error('❌ Failed to load listings.json');
+      return;
     }
   
     const json = await resp.json();
     
-    // 2. Data is good! NOW we clear the screen.
+    // Clear the block only after data is found
     block.textContent = '';
     
     const ul = document.createElement('ul');
