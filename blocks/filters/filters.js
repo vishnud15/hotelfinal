@@ -1,30 +1,66 @@
-import { loadCSS } from '../../scripts/aem.js';
+/**
+ * Filters Block
+ * Category filter bar with active state management
+ */
+
+// Configuration
+const FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'beach', label: 'Beachfront' },
+  { id: 'cabins', label: 'Cabins' },
+  { id: 'exp', label: 'Experiences' },
+  { id: 'serv', label: 'Services' }
+];
 
 export default function decorate(block) {
-  // 1. Reuse your HTML Structure
-  block.innerHTML = `
-    <div class="filter-bar">
-        <div class="filter-item active" data-filter="all">All</div>
-        <div class="filter-item" data-filter="beach">Beachfront</div>
-        <div class="filter-item" data-filter="cabins">Cabins</div>
-        <div class="filter-item" data-filter="exp">Experiences</div>
-        <div class="filter-item" data-filter="serv">Services</div>
-    </div>
-  `;
+  // Create HTML
+  block.innerHTML = createFiltersHTML();
+  
+  // Initialize click handlers
+  initFilterHandlers(block);
+}
 
-  // 2. Reuse your Event Listener Logic
-  const filters = block.querySelectorAll('.filter-item');
+/**
+ * Creates the filters HTML
+ */
+function createFiltersHTML() {
+  const filterItems = FILTERS.map((filter, index) => {
+    const activeClass = index === 0 ? 'active' : '';
+    return `
+      <div class="filter-item ${activeClass}" data-filter="${filter.id}">
+        ${filter.label}
+      </div>
+    `;
+  }).join('');
+  
+  return `<div class="filter-bar">${filterItems}</div>`;
+}
 
-  filters.forEach((filter) => {
-    filter.addEventListener('click', () => {
-        // Visual: Remove active from all, add to clicked
-        filters.forEach(f => f.classList.remove('active'));
-        filter.classList.add('active');
-        
-        // Logic: Dispatch the filter event
-        const category = filter.getAttribute('data-filter');
-        const event = new CustomEvent('performFilter', { detail: { category } });
-        document.dispatchEvent(event);
+/**
+ * Initialize filter click handlers
+ */
+function initFilterHandlers(block) {
+  const filterItems = block.querySelectorAll('.filter-item');
+  
+  filterItems.forEach((item) => {
+    item.addEventListener('click', () => {
+      handleFilterClick(item, filterItems);
     });
   });
+}
+
+/**
+ * Handle filter click
+ */
+function handleFilterClick(clickedItem, allItems) {
+  // Update visual state
+  allItems.forEach(item => item.classList.remove('active'));
+  clickedItem.classList.add('active');
+  
+  // Dispatch filter event
+  const category = clickedItem.getAttribute('data-filter');
+  const filterEvent = new CustomEvent('performFilter', {
+    detail: { category }
+  });
+  document.dispatchEvent(filterEvent);
 }

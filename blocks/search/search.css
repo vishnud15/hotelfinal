@@ -1,4 +1,10 @@
-/* --- DESKTOP STYLES (The Pill Shape) --- */
+/**
+ * Search Block Styles
+ * Desktop: Horizontal pill layout
+ * Mobile: Stacked vertical layout
+ */
+
+/* === CONTAINER === */
 .search {
   display: flex;
   justify-content: center;
@@ -7,11 +13,12 @@
   background-color: transparent;
 }
 
+/* === SEARCH BAR === */
 .search .search-bar {
   background: white;
   display: flex;
   align-items: center;
-  border-radius: 50px; /* Big rounded corners */
+  border-radius: 50px;
   padding: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin: 0 auto;
@@ -20,12 +27,12 @@
   position: relative;
 }
 
-/* Items side-by-side */
+/* === SEARCH ITEMS === */
 .search .search-item {
   display: flex;
   flex-direction: column;
   padding: 10px 15px;
-  border-right: 1px solid #f1f1f1; /* Vertical dividers */
+  border-right: 1px solid #f1f1f1;
   flex: 1;
   position: relative;
 }
@@ -35,10 +42,11 @@
 }
 
 .search .location-item {
-  flex: 1.5; /* Location gets more space */
+  flex: 1.5;
   min-width: 200px;
 }
 
+/* === LABELS & INPUTS === */
 .search .search-item label {
   font-size: 12px;
   font-weight: bold;
@@ -56,6 +64,7 @@
   color: #222;
 }
 
+/* === SEARCH BUTTON === */
 .search #search-btn {
   background-color: #e0294a;
   border: none;
@@ -66,13 +75,14 @@
   font-weight: bold;
   font-size: 16px;
   margin-left: 10px;
+  transition: background-color 0.2s;
 }
 
 .search #search-btn:hover {
   background-color: #c02040;
 }
 
-/* Dropdown Logic */
+/* === AUTOCOMPLETE DROPDOWN === */
 .search .suggestions-list {
   position: absolute;
   top: 100%;
@@ -82,13 +92,14 @@
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   list-style: none;
+  margin: 0;
   margin-top: 10px;
+  padding: 0;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transition: all 0.3s ease;
   z-index: 1000;
-  padding: 0;
 }
 
 .search .suggestions-list.show {
@@ -103,91 +114,58 @@
   cursor: pointer;
   border-bottom: 1px solid #f0f0f0;
   font-size: 14px;
+  transition: background-color 0.2s;
 }
 
-/* --- MOBILE STYLES (The Fix) --- */
+.search .suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+.search .suggestions-list li:hover {
+  background-color: #f7f7f7;
+}
+
+/* === MOBILE RESPONSIVE === */
 @media (max-width: 768px) {
-  /* 1. Stack vertical */
-  .search .search-bar {
-    flex-direction: column;
-    border-radius: 24px; /* Smaller corners for boxy look */
-    padding: 20px;
-    gap: 10px;
-  }
-
-  /* 2. Full width items */
-  .search .search-item {
-    width: 100%;
-    border-right: none; /* Remove vertical divider */
-    border-bottom: 1px solid #f1f1f1; /* Add horizontal divider */
-    padding: 10px 0;
-  }
-
-  /* Remove border from the last input */
-  .search .search-item:nth-last-child(2) {
-    border-bottom: none;
-  }
-
-  /* 3. Full width button */
-  .search #search-btn {
-    width: 100%;
-    margin-left: 0;
-    margin-top: 10px;
-    padding: 14px;
-    border-radius: 12px;
+  /* Reduce outer padding */
+  .search {
+    padding: 10px;
+    box-sizing: border-box;
   }
   
-  /* Reset location width */
-  .search .location-item {
-    min-width: auto;
-  }
-}
-/* --- MOBILE STYLES (Fix Alignment) --- */
-@media (max-width: 768px) {
-  /* 1. Wrapper: Prevent overflow and reduce padding */
-  .search {
-    padding: 10px; /* Reduced from 20px so it fits tight screens */
-    width: 100%;
-    box-sizing: border-box; /* CRITICAL: Includes padding in width calculation */
-  }
-
-  /* 2. The Search Box: Stack and Center */
+  /* Stack vertically */
   .search .search-bar {
     flex-direction: column;
-    width: 100%;       /* Fill the screen */
-    max-width: 100%;   /* Remove desktop limits */
-    margin: 0 auto;    /* Force Center */
-    padding: 15px;     /* Internal spacing */
-    box-sizing: border-box; /* Prevents it from being wider than screen */
-    gap: 0;            /* Remove gap to let borders handle spacing */
-    
-    border-radius: 16px; /* Slightly boxier for mobile */
-    align-items: stretch; /* Force inputs to fill the width */
+    border-radius: 16px;
+    padding: 15px;
+    width: 100%;
+    max-width: 100%;
+    gap: 0;
   }
-
-  /* 3. Items: Full Width */
+  
+  /* Full width items */
   .search .search-item {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #eee;
-    padding: 12px 5px; /* Adjust spacing for fingers */
+    padding: 12px 5px;
   }
-
-  /* Remove border from the last input (before the button) */
+  
+  /* Remove last border */
   .search .search-item:nth-last-child(2) {
     border-bottom: none;
-  }
-
-  /* 4. Button: Full Width & Big Target */
-  .search #search-btn {
-    width: 100%;
-    margin: 10px 0 0 0; /* Reset margins */
-    padding: 14px;
-    border-radius: 12px;
   }
   
   /* Reset location item width */
   .search .location-item {
     min-width: auto;
+  }
+  
+  /* Full width button */
+  .search #search-btn {
+    width: 100%;
+    margin: 10px 0 0 0;
+    padding: 14px;
+    border-radius: 12px;
   }
 }
