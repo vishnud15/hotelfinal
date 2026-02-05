@@ -1,139 +1,130 @@
 /* --- 1. LAYOUT --- */
-header nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  height: 60px; 
-  padding: 0 25px;
-  margin-bottom: 30px; 
-  
+header .nav-wrapper {
   background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: relative;
-  z-index: 1000;
-}
-
-/* --- 2. LOGO STYLES --- */
-header .logo {
-  display: flex;
-  align-items: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: #e0294a;
-}
-
-header .logo img {
-  height: 40px;
-  width: auto;
-  border-radius: 20px;
-  display: block;
-}
-
-header .logo a {
-  text-decoration: none;
-  color: #e0294a;
-  padding: 5px 0;
-}
-
-/* --- 3. MENU STYLES --- */
-.nav-list {
-  margin-left: auto; /* Pushes buttons to the right */
-  list-style: none;
-  display: flex;
-  gap: 15px;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 0;
-  align-items: center;
-}
-
-.nav-list li a {
-  text-decoration: none;
-  color: white !important;
-  background-color: #e0294a;
-  padding: 8px 18px;
-  border-radius: 20px;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(224, 41, 74, 0.3);
-}
-
-.nav-list li a:hover {
-  background-color: #c71f3e;
-  transform: translateY(-1px);
-}
-
-/* --- 4. MOBILE HAMBURGER --- */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1100;
-}
-
-.hamburger span {
-  display: block;
   width: 100%;
-  height: 2px;
-  background-color: #333;
-  border-radius: 3px;
-  transition: all 0.3s ease;
+  z-index: 100;
+  position: fixed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* --- 5. MOBILE MEDIA QUERY --- */
-@media (max-width: 768px) {
-  .hamburger { 
-    display: flex; 
-  }
+header nav {
+  display: flex; /* Flexbox is best for alignment */
+  justify-content: space-between; /* Logo Left, Menu Right */
+  align-items: center; /* Vertically Center Everything */
   
-  .nav-list {
+  max-width: 1248px;
+  margin: auto;
+  padding: 0 24px;
+  height: 60px; /* Force Height */
+  box-sizing: border-box;
+}
+
+/* --- 2. BRAND (Logo) --- */
+header .nav-brand {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: #e0294a; /* Text Logo Color */
+}
+
+header .nav-brand a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* CRITICAL: Constrain the Logo Image */
+header .nav-brand img {
+  height: 40px !important; /* Force small height */
+  width: auto !important;  /* Keep aspect ratio */
+  max-width: 150px;
+  border-radius: 20px;     /* Pill shape */
+  display: block;
+}
+
+/* --- 3. SECTIONS (Menu Buttons) --- */
+header nav .nav-sections {
+  display: none; /* Hidden on mobile */
+}
+
+/* DESKTOP (900px+) */
+@media (width >= 900px) {
+  header nav .nav-sections {
+    display: block;
+    margin-left: auto; /* Push to the right */
+  }
+
+  header nav .nav-sections ul {
+    display: flex;
+    gap: 16px; /* Space between buttons */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center; /* Center buttons vertically */
+  }
+
+  header nav .nav-sections ul > li > a {
+    text-decoration: none;
+    color: white !important;
+    background-color: #e0294a;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(224, 41, 74, 0.3);
+  }
+
+  header nav .nav-sections ul > li > a:hover {
+    background-color: #c71f3e;
+    transform: translateY(-1px);
+  }
+}
+
+/* MOBILE (< 900px) */
+@media (width < 900px) {
+  header nav .nav-sections {
     position: absolute;
     top: 60px;
     left: 0;
     width: 100%;
-    background-color: white;
+    background: white;
     flex-direction: column;
     padding: 0;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.4s ease;
-  }
-  
-  .nav-list li { 
-    width: 100%; 
-    text-align: center; 
-    margin: 0; 
-  }
-  
-  .nav-list li a {
-    display: block;
-    width: 100%;
-    padding: 15px 0;
-    border-radius: 0;
-    background-color: transparent;
-    color: #333 !important;
-    box-shadow: none;
-    border-bottom: 1px solid #f0f0f0;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
   }
 
-  .nav-list.active { 
-    max-height: 400px; 
-    opacity: 1; 
-    padding: 10px 0; 
+  header nav .nav-sections ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
   
-  .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-  .hamburger.active span:nth-child(2) { opacity: 0; }
-  .hamburger.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  header nav .nav-sections ul > li {
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  header nav .nav-sections ul > li > a {
+    display: block;
+    padding: 15px;
+    color: #333 !important;
+    background: transparent !important;
+    box-shadow: none;
+  }
+}
+
+/* HAMBURGER */
+header .nav-hamburger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 100%;
+}
+
+@media (width >= 900px) {
+  header .nav-hamburger { display: none; }
 }

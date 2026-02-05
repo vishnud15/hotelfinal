@@ -1,81 +1,121 @@
-import { loadCSS } from '../../scripts/aem.js';
+import { getMetadata } from '../../scripts/aem.js';
+import { loadFragment } from '../fragment/fragment.js';
 
-export default async function decorate(block) {
-  // 1. FETCH THE NAV CONTENT
-  const resp = await fetch('/nav.plain.html');
-  if (!resp.ok) {
-    console.error("Could not fetch nav.plain.html");
-    return;
-  }
-  const html = await resp.text();
-  block.innerHTML = html;
+// Mobile breakpoint
+const isDesktop = window.matchMedia('(min-width: 900px)');
 
-  // 2. CREATE THE CONTAINER
-  const nav = document.createElement('nav');
-  nav.className = 'nav-wrapper';
-
-  // 3. SMART LOGO FINDER
-  // First, look for an image
-  let logoEl = block.querySelector('picture, img');
-  
-  // If no image, look for a Heading (H1, H2) or the first text link
-  if (!logoEl) {
-    logoEl = block.querySelector('h1, h2');
-  }
-
-  // Create Logo Container
-  const logoContainer = document.createElement('div');
-  logoContainer.className = 'logo';
-  
-  if (logoEl) {
-    logoContainer.append(logoEl);
-  } else {
-    // Fallback: If absolutely nothing is found, create text
-    logoContainer.innerHTML = '<a href="/">Hotelo</a>';
-  }
-  nav.append(logoContainer);
-
-  // 4. SMART MENU BUILDER (The Fix)
-  // Try to find a list first
-  let ul = block.querySelector('ul');
-
-  // IF NO LIST FOUND: Create one from any stray links
-  if (!ul) {
-    const allLinks = block.querySelectorAll('a');
-    if (allLinks.length > 0) {
-      ul = document.createElement('ul');
-      allLinks.forEach(link => {
-        // Don't duplicate the logo link if we just used it
-        if (!logoContainer.contains(link)) {
-            const li = document.createElement('li');
-            li.append(link);
-            ul.append(li);
-        }
-      });
+function closeOnEscape(e) {
+  if (e.code === 'Escape') {
+    const nav = document.getElementById('nav');
+    const navSections = nav.querySelector('.nav-sections');
+    if (!navSections) return;
+    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+    if (navSectionExpanded && isDesktop.matches) {
+      toggleAllNavSections(navSections);
+      navSectionExpanded.focus();
+    } else if (!isDesktop.matches) {
+      toggleMenu(nav, navSections);
+      nav.querySelector('button').focus();
     }
   }
+}
 
-  // Add the Menu to the Nav
-  if (ul) {
-    ul.classList.add('nav-list');
-    nav.append(ul);
+function toggleAllNavSections(sections, expanded = false) {
+  if (!sections) return;
+  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
+    section.setAttribute('aria-expanded', expanded);
+  });
+}
+
+function toggleMenu(nav, navSections, forceExpanded = null) {
+  const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
+  const button = nav.querySelector('.nav-hamburger button');
+  document.body.style.overflowY = (expanded || isDesktop.matches) ? '' : 'hidden';
+  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
+  button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
+
+  if (!expanded || isDesktop.matches) {
+    window.addEventListener('keydown', closeOnEscape);
+  } else {
+    window.removeEventListener('keydown', closeOnEscape);
+  }
+}
+
+export default async function decorate(block) {
+  // 1. FETCH CONTENT
+  const navMeta = getMetadata('nav');
+  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
+  const fragment = await loadFragment(navPath);
+
+  // 2. SETUP CONTAINERS
+  const nav = document.createElement('nav');
+  nav.id = 'nav';
+  
+  const navBrand = document.createElement('div');
+  navBrand.className = 'nav-brand';
+  
+  const navSections = document.createElement('div');
+  navSections.className = 'nav-sections';
+
+  // 3. SMART SORTING
+  // Find the List (Menu)
+  const list = fragment.querySelector('ul');
+  if (list) {
+      // 3a. Check for "Hotelo" link inside the list (The Duplicate Fix)
+      // If the first link is just the brand name, move it to Brand!
+      const firstItem = list.querySelector('li');
+      if (firstItem && firstItem.innerText.trim().toLowerCase() === 'hotelo') {
+          navBrand.append(firstItem.querySelector('a') || firstItem.innerText);
+          firstItem.remove(); // Remove it from the menu
+      }
+      navSections.append(list);
   }
 
-  // 5. CLEAN UP & RENDER
+  // 4. LOGO FINDER (If we didn't find it in the list)
+  if (!navBrand.innerHTML.trim()) {
+      // Look for an image or H1 in the rest of the fragment
+      const logoImg = fragment.querySelector('img, picture');
+      const logoText = fragment.querySelector('h1, h2, p');
+      
+      if (logoImg) {
+          navBrand.append(logoImg);
+      } else if (logoText) {
+          navBrand.append(logoText);
+      } else {
+          navBrand.innerHTML = '<a href="/">Hotelo</a>';
+      }
+  }
+
+  // 5. BUILD NAV
+  nav.append(navBrand);
+  nav.append(navSections);
+
+  // 6. HAMBURGER
+  const hamburger = document.createElement('div');
+  hamburger.classList.add('nav-hamburger');
+  hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="Open navigation">
+      <span class="nav-hamburger-icon"></span>
+    </button>`;
+  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
+  nav.prepend(hamburger);
+  
+  nav.setAttribute('aria-expanded', 'false');
+  toggleMenu(nav, navSections, isDesktop.matches);
+  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
+
+  const navWrapper = document.createElement('div');
+  navWrapper.className = 'nav-wrapper';
+  navWrapper.append(nav);
   block.textContent = '';
-  block.append(nav);
+  block.append(navWrapper);
 
-  // 6. HAMBURGER BUTTON (Mobile)
-  const hamburger = document.createElement('button');
-  hamburger.className = 'hamburger';
-  hamburger.innerHTML = `<span></span><span></span><span></span>`;
-  nav.insertBefore(hamburger, ul); // Sit between Logo and Menu
-
-  // 7. EVENT LISTENER
-  hamburger.addEventListener('click', () => {
-    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
-    hamburger.setAttribute('aria-expanded', !expanded);
-    if (ul) ul.classList.toggle('active');
-    hamburger.classList.toggle('active');
+  // 7. FINAL CLEANUP
+  // Remove empty text nodes and phantom links
+  nav.querySelectorAll('a').forEach((link) => {
+    if (!link.textContent.trim() && !link.querySelector('img')) {
+       if (link.closest('li')) link.closest('li').remove();
+       else link.remove();
+    }
   });
 }
