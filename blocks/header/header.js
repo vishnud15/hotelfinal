@@ -1,54 +1,81 @@
-import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
+import { loadCSS } from '../../scripts/aem.js';
 
 export default async function decorate(block) {
-  // 1. Load the Nav Document (Content)
-  const navMeta = getMetadata('nav');
-  const navPath = navMeta ? new URL(navMeta).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+  // 1. FETCH THE NAV CONTENT
+  const resp = await fetch('/nav.plain.html');
+  if (!resp.ok) {
+    console.error("Could not fetch nav.plain.html");
+    return;
+  }
+  const html = await resp.text();
+  block.innerHTML = html;
 
-  // 2. Create the HTML Structure (Matching your index.html)
+  // 2. CREATE THE CONTAINER
   const nav = document.createElement('nav');
-  nav.innerHTML = `
-    <div class="logo">
-        <img src="/media/logo.webp" alt="Hotelo Logo" onerror="this.style.display='none';this.parentNode.innerText='Hotelo'">
-    </div>
-    <button class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-  `;
+  nav.className = 'nav-wrapper';
 
-  // 3. Extract the Link List from the Fragment
-  // We assume your /nav document has a bulleted list. 
-  // We grab that list and make it your "nav-menu"
-  const ul = fragment.querySelector('ul');
+  // 3. SMART LOGO FINDER
+  // First, look for an image
+  let logoEl = block.querySelector('picture, img');
+  
+  // If no image, look for a Heading (H1, H2) or the first text link
+  if (!logoEl) {
+    logoEl = block.querySelector('h1, h2');
+  }
+
+  // Create Logo Container
+  const logoContainer = document.createElement('div');
+  logoContainer.className = 'logo';
+  
+  if (logoEl) {
+    logoContainer.append(logoEl);
+  } else {
+    // Fallback: If absolutely nothing is found, create text
+    logoContainer.innerHTML = '<a href="/">Hotelo</a>';
+  }
+  nav.append(logoContainer);
+
+  // 4. SMART MENU BUILDER (The Fix)
+  // Try to find a list first
+  let ul = block.querySelector('ul');
+
+  // IF NO LIST FOUND: Create one from any stray links
+  if (!ul) {
+    const allLinks = block.querySelectorAll('a');
+    if (allLinks.length > 0) {
+      ul = document.createElement('ul');
+      allLinks.forEach(link => {
+        // Don't duplicate the logo link if we just used it
+        if (!logoContainer.contains(link)) {
+            const li = document.createElement('li');
+            li.append(link);
+            ul.append(li);
+        }
+      });
+    }
+  }
+
+  // Add the Menu to the Nav
   if (ul) {
-    ul.id = 'nav-menu';
+    ul.classList.add('nav-list');
     nav.append(ul);
   }
 
-  // 4. Add the Hamburger Logic (From your script.js)
-  const hamburger = nav.querySelector('#hamburger');
-  const navMenu = nav.querySelector('#nav-menu');
-
-  if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-      }
-    });
-  }
-
-  // 5. Clear and Append
+  // 5. CLEAN UP & RENDER
   block.textContent = '';
   block.append(nav);
+
+  // 6. HAMBURGER BUTTON (Mobile)
+  const hamburger = document.createElement('button');
+  hamburger.className = 'hamburger';
+  hamburger.innerHTML = `<span></span><span></span><span></span>`;
+  nav.insertBefore(hamburger, ul); // Sit between Logo and Menu
+
+  // 7. EVENT LISTENER
+  hamburger.addEventListener('click', () => {
+    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+    hamburger.setAttribute('aria-expanded', !expanded);
+    if (ul) ul.classList.toggle('active');
+    hamburger.classList.toggle('active');
+  });
 }
