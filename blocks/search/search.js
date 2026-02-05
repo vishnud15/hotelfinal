@@ -73,22 +73,32 @@ export default function decorate(block) {
       }
   });
 
-  // --- LOGIC 2: DATE VALIDATION ---
+  // --- LOGIC 2: DATE VALIDATION (Check In/Out Checks) ---
   const today = new Date().toISOString().split('T')[0];
-  checkinInput.min = today;
+  checkinInput.setAttribute('min', today);
+  checkoutInput.setAttribute('min', today);
 
+  // When Check-In Changes
   checkinInput.addEventListener('change', () => {
-      checkoutInput.min = checkinInput.value;
-      if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
-          checkoutInput.value = '';
-          alert('Check-out date must be after check-in date');
+      if (checkinInput.value) {
+        // Update Check-Out minimum to match Check-In
+        checkoutInput.setAttribute('min', checkinInput.value);
+
+        // Strict Check: Check-Out must be AFTER Check-In
+        if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
+            checkoutInput.value = '';
+            alert('Check-out date must be after check-in date');
+            if (checkoutInput.showPicker) checkoutInput.showPicker(); // Open calendar
+        }
       }
   });
 
+  // When Check-Out Changes
   checkoutInput.addEventListener('change', () => {
       if (checkinInput.value && checkoutInput.value <= checkinInput.value) {
           checkoutInput.value = '';
           alert('Check-out date must be after check-in date');
+          if (checkoutInput.showPicker) checkoutInput.showPicker(); // Open calendar
       }
   });
 
@@ -96,12 +106,10 @@ export default function decorate(block) {
   
   // A. Block invalid typing (letters, symbols)
   guestsInput.addEventListener('keydown', function(e) {
-      // Allow: backspace, delete, tab, escape, enter, arrows
       if ([46, 8, 9, 27, 13, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
-         (e.keyCode === 65 && e.ctrlKey === true)) { // Allow Ctrl+A
+         (e.keyCode === 65 && e.ctrlKey === true)) { 
           return;
       }
-      // Stop anything that isn't a number
       if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
           e.preventDefault();
       }
@@ -117,7 +125,7 @@ export default function decorate(block) {
       }
 
       if (value > MAX_GUESTS) {
-          this.value = MAX_GUESTS; // Force it back to 15 immediately
+          this.value = MAX_GUESTS;
           alert(`Sorry, the maximum number of guests is ${MAX_GUESTS}.`);
       }
   });
@@ -127,6 +135,7 @@ export default function decorate(block) {
       const query = locationInput.value.toLowerCase().trim();
       const event = new CustomEvent('performSearch', { detail: { query } });
       document.dispatchEvent(event);
+      console.log('Search dispatched:', query);
   }
 
   searchBtn.onclick = performSearch;
