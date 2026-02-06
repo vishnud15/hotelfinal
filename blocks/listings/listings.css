@@ -1,10 +1,18 @@
 /**
  * Listings Block Styles
  * Responsive grid layout with cards
+ * NEW: Empty state for no results
  */
 
+/* === CONTAINER === */
+.listings-container {
+  position: relative;
+  width: 100%;
+}
+
 /* === GRID CONTAINER === */
-.listings ul {
+.listings ul,
+.listings .listings-grid {
   list-style: none;
   padding: 0 20px;
   margin: 40px auto;
@@ -151,9 +159,125 @@
   background: #c02040;
 }
 
+/* === EMPTY STATE (NO RESULTS) === */
+.listings-empty {
+  display: none; /* Hidden by default */
+  flex-direction: column;
+  align-items: center;
+  min-height: 500px;
+  padding: 60px 20px;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.listings-empty .empty-state-content {
+  text-align: center;
+  width: 100%;
+}
+
+.listings-empty .empty-state-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.3;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+.listings-empty .empty-state-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 12px 0;
+}
+
+.listings-empty .empty-state-description {
+  font-size: 16px;
+  color: #717171;
+  margin: 0 0 30px 0;
+  line-height: 1.5;
+}
+
+.listings-empty .empty-state-suggestions {
+  background: #f7f7f7;
+  border-radius: 12px;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.listings-empty .suggestion-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 12px 0;
+}
+
+.listings-empty .empty-state-suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listings-empty .empty-state-suggestions li {
+  font-size: 14px;
+  color: #717171;
+  padding: 6px 0;
+  padding-left: 24px;
+  position: relative;
+}
+
+.listings-empty .empty-state-suggestions li::before {
+  content: "•";
+  position: absolute;
+  left: 8px;
+  color: #e0294a;
+  font-weight: bold;
+}
+
+.listings-empty .empty-state-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.listings-empty .reset-btn {
+  padding: 14px 28px;
+  background: #e0294a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(224, 41, 74, 0.2);
+}
+
+.listings-empty .reset-btn:hover {
+  background: #c02040;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(224, 41, 74, 0.3);
+}
+
+.listings-empty .reset-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(224, 41, 74, 0.2);
+}
+
 /* === MOBILE === */
 @media (max-width: 480px) {
   .listings ul,
+  .listings .listings-grid,
   .listings-loading {
     padding-left: 0;
     padding-right: 0;
@@ -167,5 +291,31 @@
   .listings .card {
     width: 100%;
     max-width: 320px;
+  }
+  
+  .listings-empty {
+    min-height: 400px;
+    padding: 40px 20px;
+  }
+  
+  .listings-empty .empty-state-icon {
+    font-size: 60px;
+  }
+  
+  .listings-empty .empty-state-title {
+    font-size: 22px;
+  }
+  
+  .listings-empty .empty-state-description {
+    font-size: 14px;
+  }
+  
+  .listings-empty .empty-state-suggestions {
+    padding: 16px 20px;
+  }
+  
+  .listings-empty .reset-btn {
+    width: 100%;
+    padding: 16px;
   }
 }

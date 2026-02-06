@@ -1,33 +1,19 @@
 /**
  * Search Block
  * Handles location autocomplete, date validation, and guest count
+ * NEW: Dynamic autocomplete from listings data
  */
 
 // Configuration
 const CONFIG = {
-  locations: [
-    "Munnar, Kerala",
-    "Goa Beach Resort",
-    "Himalayan Trek",
-    "Maldives Villa",
-    "Coorg Cottage",
-    "Mumbai Grand Hotel",
-    "Rajasthan Desert Camp",
-    "Shimla Mountain Lodge",
-    "Andaman Beach Resort",
-    "Kashmir Houseboat",
-    "Delhi Grand Palace",
-    "Darjeeling Tea Estate",
-    "Pondicherry Beach Villa",
-    "Jaipur Heritage Hotel",
-    "Manali Pine Cottage",
-    "Ranthambore Safari Lodge"
-  ],
   maxGuests: 15,
   debounceDelay: 200
 };
 
-export default function decorate(block) {
+// Dynamic locations (loaded from listings data)
+let availableLocations = [];
+
+export default async function decorate(block) {
   // Create HTML structure
   block.innerHTML = createSearchHTML();
   
@@ -41,11 +27,48 @@ export default function decorate(block) {
     guests: block.querySelector('#guests-input')
   };
   
+  // Load locations from listings data
+  await loadLocationsFromListings();
+  
   // Initialize features
   initAutocomplete(elements);
   initDateValidation(elements);
   initGuestValidation(elements);
   initSearchButton(elements);
+}
+
+/**
+ * Load locations dynamically from listings.json
+ */
+async function loadLocationsFromListings() {
+  try {
+    const response = await fetch('/listings.json');
+    
+    if (!response.ok) {
+      console.warn('Could not load listings for autocomplete');
+      return;
+    }
+    
+    const json = await response.json();
+    
+    if (!json.data || !Array.isArray(json.data)) {
+      console.warn('Invalid listings data format');
+      return;
+    }
+    
+    // Extract unique location names from the data
+    availableLocations = json.data
+      .map(listing => listing.name) // Get all names
+      .filter(name => name && name.trim()) // Remove empty/null
+      .filter((name, index, array) => array.indexOf(name) === index) // Remove duplicates
+      .sort(); // Alphabetical order for better UX
+    
+    console.log(`Loaded ${availableLocations.length} locations for autocomplete`);
+    
+  } catch (error) {
+    console.warn('Failed to load locations:', error);
+    // Graceful degradation - autocomplete will still work with empty array
+  }
 }
 
 /**
@@ -133,26 +156,32 @@ function initAutocomplete({ locationInput, suggestionsList }) {
  * Show filtered suggestions
  */
 function showSuggestions(query, suggestionsList, locationInput) {
-  const matches = CONFIG.locations.filter(location =>
+  // Filter from dynamically loaded locations
+  const matches = availableLocations.filter(location =>
     location.toLowerCase().includes(query.toLowerCase())
   );
   
   suggestionsList.innerHTML = '';
   
   if (matches.length === 0) {
-    hideSuggestions(suggestionsList);
-    return;
-  }
-  
-  matches.forEach(match => {
-    const li = document.createElement('li');
-    li.textContent = match;
-    li.addEventListener('click', () => {
-      locationInput.value = match;
-      hideSuggestions(suggestionsList);
+    // Show "no results" message
+    const noResults = document.createElement('li');
+    noResults.textContent = 'No matching locations';
+    noResults.style.opacity = '0.5';
+    noResults.style.cursor = 'default';
+    suggestionsList.appendChild(noResults);
+  } else {
+    // Create clickable suggestions
+    matches.forEach(match => {
+      const li = document.createElement('li');
+      li.textContent = match;
+      li.addEventListener('click', () => {
+        locationInput.value = match;
+        hideSuggestions(suggestionsList);
+      });
+      suggestionsList.appendChild(li);
     });
-    suggestionsList.appendChild(li);
-  });
+  }
   
   suggestionsList.classList.add('show');
 }

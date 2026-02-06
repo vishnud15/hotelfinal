@@ -1,6 +1,7 @@
 /**
  * Listings Block
  * Displays property cards with search, filter, and favorites
+ * NEW: Empty state when no results match
  */
 
 // State
@@ -83,14 +84,26 @@ function showError(block, error) {
 function renderListings(block, listings) {
   block.innerHTML = '';
   
+  // Create main container
+  const container = document.createElement('div');
+  container.className = 'listings-container';
+  
+  // Create cards list
   const ul = document.createElement('ul');
+  ul.className = 'listings-grid';
   
   listings.forEach((property) => {
     const card = createCard(property);
     ul.appendChild(card);
   });
   
-  block.appendChild(ul);
+  container.appendChild(ul);
+  
+  // Create empty state (hidden by default)
+  const emptyState = createEmptyState();
+  container.appendChild(emptyState);
+  
+  block.appendChild(container);
 }
 
 /**
@@ -125,6 +138,42 @@ function createCard(property) {
 }
 
 /**
+ * Create empty state element
+ */
+function createEmptyState() {
+  const emptyState = document.createElement('div');
+  emptyState.className = 'listings-empty';
+  emptyState.style.display = 'none'; // Hidden by default
+  
+  emptyState.innerHTML = `
+    <div class="empty-state-content">
+      <div class="empty-state-icon">🔍</div>
+      <h3 class="empty-state-title">No properties found</h3>
+      <p class="empty-state-description">
+        We couldn't find any properties matching your search and filters.
+      </p>
+      <div class="empty-state-suggestions">
+        <p class="suggestion-title">Try:</p>
+        <ul>
+          <li id="clear-search-suggestion" style="display: none;">
+            Clearing your search query
+          </li>
+          <li id="clear-filter-suggestion" style="display: none;">
+            Selecting "All" categories
+          </li>
+          <li>Adjusting your search criteria</li>
+        </ul>
+      </div>
+      <div class="empty-state-actions">
+        <button id="reset-filters-btn" class="reset-btn">Clear All Filters</button>
+      </div>
+    </div>
+  `;
+  
+  return emptyState;
+}
+
+/**
  * Initialize all event listeners
  */
 function initEventListeners(block) {
@@ -136,6 +185,12 @@ function initEventListeners(block) {
   
   // Filter event listener
   document.addEventListener('performFilter', handleFilter);
+  
+  // Reset filters button
+  const resetBtn = block.querySelector('#reset-filters-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', handleResetFilters);
+  }
 }
 
 /**
@@ -189,10 +244,42 @@ function handleFilter(event) {
 }
 
 /**
+ * Handle reset filters button
+ */
+function handleResetFilters() {
+  // Reset state
+  currentFilter = 'all';
+  currentSearchQuery = '';
+  
+  // Clear search input
+  const searchInput = document.querySelector('#location-input');
+  if (searchInput) {
+    searchInput.value = '';
+  }
+  
+  // Reset filter buttons to "All"
+  const filterItems = document.querySelectorAll('.filter-item');
+  filterItems.forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('data-filter') === 'all') {
+      item.classList.add('active');
+    }
+  });
+  
+  // Reapply filters (will show all cards)
+  applyFilters();
+}
+
+/**
  * Apply both search and filter
  */
 function applyFilters() {
   const cards = document.querySelectorAll('.listings .card');
+  const emptyState = document.querySelector('.listings-empty');
+  const searchSuggestion = document.querySelector('#clear-search-suggestion');
+  const filterSuggestion = document.querySelector('#clear-filter-suggestion');
+  
+  let visibleCount = 0;
   
   cards.forEach((card) => {
     const category = card.getAttribute('data-category');
@@ -203,7 +290,37 @@ function applyFilters() {
     
     const shouldShow = matchesFilter && matchesSearch;
     card.style.display = shouldShow ? 'flex' : 'none';
+    
+    if (shouldShow) {
+      visibleCount++;
+    }
   });
+  
+  // Show/hide empty state based on visible cards
+  if (visibleCount === 0) {
+    // No results - show empty state
+    if (emptyState) {
+      emptyState.style.display = 'flex';
+      
+      // Update suggestions based on active filters
+      if (searchSuggestion && currentSearchQuery) {
+        searchSuggestion.style.display = 'list-item';
+      } else if (searchSuggestion) {
+        searchSuggestion.style.display = 'none';
+      }
+      
+      if (filterSuggestion && currentFilter !== 'all') {
+        filterSuggestion.style.display = 'list-item';
+      } else if (filterSuggestion) {
+        filterSuggestion.style.display = 'none';
+      }
+    }
+  } else {
+    // Has results - hide empty state
+    if (emptyState) {
+      emptyState.style.display = 'none';
+    }
+  }
 }
 
 /**
