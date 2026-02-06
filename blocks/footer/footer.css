@@ -1,20 +1,83 @@
+/* --- CONTAINER --- */
 footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+  margin-top: 60px;
+  padding: 40px 20px;
 }
 
-footer .footer > div {
-  margin: auto;
+.footer-content {
   max-width: 1200px;
-  padding: 40px 24px 24px;
+  margin: 0 auto;
+  
+  /* THE MAGIC FIX: Creates 3 columns automatically */
+  column-count: 3;
+  column-gap: 40px;
+  
+  text-align: left; /* Fixes the centering issue */
 }
 
-footer .footer p {
-  margin: 0;
+/* --- HEADINGS (Support, Hosting, etc) --- */
+.footer-content h1,
+.footer-content h2,
+.footer-content h3,
+.footer-content strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: #222;
+  margin: 0 0 16px 0;
+  display: block;
+  
+  /* Keep heading with its text */
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
+/* --- LISTS (Remove Bullets & Fix Align) --- */
+.footer-content ul {
+  list-style: none; /* No dots */
+  padding: 0;       /* No weird indentation */
+  margin: 0 0 24px 0;
+  
+  /* Keep list items together */
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.footer-content li {
+  margin-bottom: 12px;
+}
+
+/* --- LINKS --- */
+.footer-content a {
+  text-decoration: none;
+  color: #717171;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+  color: #222;
+}
+
+/* --- COPYRIGHT / BOTTOM TEXT --- */
+/* Target the last paragraph (usually copyright) */
+.footer-content p:last-of-type {
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+  margin-top: 20px;
+  color: #717171;
+  font-size: 12px;
+  
+  /* Force it to span across the bottom */
+  column-span: all; 
+  text-align: center;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+  .footer-content {
+    column-count: 1; /* Stack vertically on phone */
   }
 }
