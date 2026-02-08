@@ -1,195 +1,219 @@
-/* --- 1. LAYOUT --- */
-header .nav-wrapper {
-  background-color: white;
-  width: 100%;
-  z-index: 100;
-  position: fixed;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+/* === HEADER - NESTED SYNTAX === */
 
-header nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1248px;
-  margin: auto;
-  padding: 0 24px;
-  height: 60px;
-  box-sizing: border-box;
-}
-
-/* --- 2. BRAND (Logo) --- */
-header .nav-brand {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  color: #e0294a;
-}
-
-header .nav-brand a {
-  text-decoration: none;
-  color: inherit;
-}
-
-header .nav-brand img {
-  height: 40px !important;
-  width: auto !important;
-  max-width: 150px;
-  border-radius: 20px;
-  display: block;
-}
-
-/* --- 3. DESKTOP SECTIONS (900px+) --- */
-header nav .nav-sections {
-  display: none; /* Hidden on mobile by default */
-}
-
-@media (width >= 900px) {
-  header nav .nav-sections {
-    display: block;
-    margin-left: auto;
+header {
+  /* --- NAV WRAPPER --- */
+  .nav-wrapper {
+    background-color: white;
+    width: 100%;
+    z-index: 100;
+    position: fixed;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
-  header nav .nav-sections ul {
+  /* --- NAVIGATION --- */
+  nav {
     display: flex;
-    gap: 16px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    justify-content: space-between;
     align-items: center;
+    max-width: 1248px;
+    margin: auto;
+    padding: 0 24px;
+    height: 60px;
+    box-sizing: border-box;
   }
 
-  header nav .nav-sections ul > li > a {
-    text-decoration: none;
-    color: white !important;
-    background-color: #e0294a;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    display: inline-block;
-    box-shadow: 0 2px 4px rgba(224, 41, 74, 0.3);
-  }
-
-  header nav .nav-sections ul > li > a:hover {
-    background-color: #c71f3e;
-    transform: translateY(-1px);
-  }
-  
-  /* Hide Hamburger on Desktop */
-  header .nav-hamburger { display: none; }
-}
-
-/* --- 4. MOBILE HAMBURGER ICON (< 900px) --- */
-@media (width < 900px) {
-  header .nav-hamburger {
+  /* --- BRAND (Logo) --- */
+  .nav-brand {
     display: flex;
     align-items: center;
     height: 100%;
-    padding-left: 16px;
-    cursor: pointer;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    color: #e0294a;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      height: 40px !important;
+      width: auto !important;
+      max-width: 150px;
+      border-radius: 20px;
+      display: block;
+    }
   }
 
-  /* RESET the Blue Button Style */
-  header .nav-hamburger button {
-    height: 44px;
-    width: 44px;
-    background: transparent !important; /* Removes blue background */
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* The 3 Lines */
-  header .nav-hamburger-icon,
-  header .nav-hamburger-icon::before,
-  header .nav-hamburger-icon::after {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background-color: #222; /* Dark Grey Lines */
-    position: relative;
-    border-radius: 2px;
-    transition: all 0.2s ease-in-out;
-  }
-
-  header .nav-hamburger-icon::before,
-  header .nav-hamburger-icon::after {
-    content: '';
-    position: absolute;
-    left: 0;
-  }
-
-  header .nav-hamburger-icon::before { top: -8px; }
-  header .nav-hamburger-icon::after { top: 8px; }
-
-  /* Turn to X when open */
-  header nav[aria-expanded="true"] .nav-hamburger-icon {
-    background-color: transparent;
-  }
-
-  header nav[aria-expanded="true"] .nav-hamburger-icon::before {
-    top: 0;
-    transform: rotate(45deg);
-  }
-
-  header nav[aria-expanded="true"] .nav-hamburger-icon::after {
-    top: 0;
-    transform: rotate(-45deg);
+  /* --- NAV SECTIONS --- */
+  nav .nav-sections {
+    display: none; /* Hidden on mobile by default */
   }
 }
 
-/* --- 5. MOBILE MENU DRAWER (< 900px) --- */
+/* === DESKTOP (900px+) === */
+@media (width >= 900px) {
+  header {
+    nav .nav-sections {
+      display: block;
+      margin-left: auto;
+
+      ul {
+        display: flex;
+        gap: 16px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+
+        > li > a {
+          text-decoration: none;
+          color: white !important;
+          background-color: #e0294a;
+          padding: 8px 20px;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.2s ease;
+          display: inline-block;
+          box-shadow: 0 2px 4px rgba(224, 41, 74, 0.3);
+
+          &:hover {
+            background-color: #c71f3e;
+            transform: translateY(-1px);
+          }
+        }
+      }
+    }
+
+    /* Hide Hamburger on Desktop */
+    .nav-hamburger {
+      display: none;
+    }
+  }
+}
+
+/* === MOBILE HAMBURGER (<900px) === */
 @media (width < 900px) {
-  header nav .nav-sections {
-    /* Base State: Hidden */
-    display: none;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    height: calc(100vh - 60px);
-    background: white;
-    flex-direction: column;
-    padding: 24px;
-    overflow-y: auto;
-    z-index: 999;
-    border-top: 1px solid #f0f0f0;
-  }
+  header {
+    .nav-hamburger {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding-left: 16px;
+      cursor: pointer;
 
-  /* Open State: Visible */
-  header nav[aria-expanded="true"] .nav-sections {
-    display: flex;
-  }
+      button {
+        height: 44px;
+        width: 44px;
+        background: transparent !important;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
 
-  header nav .nav-sections ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    /* The 3 Lines */
+    .nav-hamburger-icon {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #222;
+      position: relative;
+      border-radius: 2px;
+      transition: all 0.2s ease-in-out;
+
+      &::before,
+      &::after {
+        content: '';
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: #222;
+        position: absolute;
+        left: 0;
+        border-radius: 2px;
+        transition: all 0.2s ease-in-out;
+      }
+
+      &::before {
+        top: -8px;
+      }
+
+      &::after {
+        top: 8px;
+      }
+    }
+
+    /* Turn to X when open */
+    nav[aria-expanded="true"] {
+      .nav-hamburger-icon {
+        background-color: transparent;
+
+        &::before {
+          top: 0;
+          transform: rotate(45deg);
+        }
+
+        &::after {
+          top: 0;
+          transform: rotate(-45deg);
+        }
+      }
+    }
   }
-  
-  header nav .nav-sections ul > li {
-    width: 100%;
-    border-bottom: 1px solid #f5f5f5;
-  }
-  
-  header nav .nav-sections ul > li > a {
-    display: block;
-    padding: 15px 0;
-    color: #222 !important; /* Dark Text */
-    background: transparent !important; /* Remove red pill background */
-    box-shadow: none;
-    font-size: 18px;
-    font-weight: 500;
+}
+
+/* === MOBILE MENU DRAWER (<900px) === */
+@media (width < 900px) {
+  header {
+    nav .nav-sections {
+      /* Base State: Hidden */
+      display: none;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      height: calc(100vh - 60px);
+      background: white;
+      flex-direction: column;
+      padding: 24px;
+      overflow-y: auto;
+      z-index: 999;
+      border-top: 1px solid #f0f0f0;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+
+        > li {
+          width: 100%;
+          border-bottom: 1px solid #f5f5f5;
+
+          > a {
+            display: block;
+            padding: 15px 0;
+            color: #222 !important;
+            background: transparent !important;
+            box-shadow: none;
+            font-size: 18px;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    /* Open State: Visible */
+    nav[aria-expanded="true"] .nav-sections {
+      display: flex;
+    }
   }
 }

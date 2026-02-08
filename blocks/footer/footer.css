@@ -1,4 +1,5 @@
-/* --- CONTAINER --- */
+/* === FOOTER - NESTED SYNTAX === */
+
 footer {
   background-color: #f7f7f7;
   border-top: 1px solid #ddd;
@@ -9,75 +10,65 @@ footer {
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  
-  /* THE MAGIC FIX: Creates 3 columns automatically */
   column-count: 3;
   column-gap: 40px;
-  
-  text-align: left; /* Fixes the centering issue */
+  text-align: left;
+
+  /* --- HEADINGS --- */
+  h1,
+  h2,
+  h3,
+  strong {
+    font-size: 14px;
+    font-weight: 800;
+    color: #222;
+    margin: 0 0 16px 0;
+    display: block;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* --- LISTS --- */
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+
+    li {
+      margin-bottom: 12px;
+    }
+  }
+
+  /* --- LINKS --- */
+  a {
+    text-decoration: none;
+    color: #717171;
+    font-size: 14px;
+    transition: color 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+      color: #222;
+    }
+  }
+
+  /* --- COPYRIGHT --- */
+  p:last-of-type {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+    margin-top: 20px;
+    color: #717171;
+    font-size: 12px;
+    column-span: all;
+    text-align: center;
+  }
 }
 
-/* --- HEADINGS (Support, Hosting, etc) --- */
-.footer-content h1,
-.footer-content h2,
-.footer-content h3,
-.footer-content strong {
-  font-size: 14px;
-  font-weight: 800;
-  color: #222;
-  margin: 0 0 16px 0;
-  display: block;
-  
-  /* Keep heading with its text */
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-/* --- LISTS (Remove Bullets & Fix Align) --- */
-.footer-content ul {
-  list-style: none; /* No dots */
-  padding: 0;       /* No weird indentation */
-  margin: 0 0 24px 0;
-  
-  /* Keep list items together */
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-.footer-content li {
-  margin-bottom: 12px;
-}
-
-/* --- LINKS --- */
-.footer-content a {
-  text-decoration: none;
-  color: #717171;
-  font-size: 14px;
-  transition: color 0.2s;
-}
-
-.footer-content a:hover {
-  text-decoration: underline;
-  color: #222;
-}
-
-/* --- COPYRIGHT / BOTTOM TEXT --- */
-/* Target the last paragraph (usually copyright) */
-.footer-content p:last-of-type {
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
-  margin-top: 20px;
-  color: #717171;
-  font-size: 12px;
-  
-  /* Force it to span across the bottom */
-  column-span: all; 
-  text-align: center;
-}
-
-/* --- MOBILE --- */
+/* === MOBILE === */
 @media (max-width: 768px) {
   .footer-content {
-    column-count: 1; /* Stack vertically on phone */
+    column-count: 1;
   }
 }
